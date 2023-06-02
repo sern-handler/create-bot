@@ -1,0 +1,16 @@
+{
+  "name": "create",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "license": "MIT",
+  "bin": {
+    "@sern/create": "index.js"
+  },
+  "devDependencies": {
+    "@types/minimist": "^1.2.2",
+    "@types/prompts": "^2.4.4",
+    "colorette": "^2.0.20",
+    "minimist": "^1.2.8",
+    "prompts": "^2.4.2"
+  }
+}
