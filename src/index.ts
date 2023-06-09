@@ -1,8 +1,9 @@
-import { greenBright, redBright, underline } from 'colorette';
+import { greenBright, red, redBright } from 'colorette';
 import prompt, { PromptObject } from 'prompts';
 import minimist from 'minimist'
 import { writeFile } from 'fs/promises'
-import { join } from 'path'
+import path from 'path'
+import fs from 'fs'
 const argv = minimist<{
   template?: string
 }>(process.argv.slice(2));
@@ -43,8 +44,25 @@ async function runInteractive() {
   const result: prompt.Answers<'template'|'name'> = await prompt([
       template,
       name,
-  ]);
+  ],
+      {
+        onCancel: () => {
+          throw new Error(red('✖') + ' Operation cancelled')
+        },
+      },
+  );
+  const root = path.join(cwd, result.name);
+
+  
+  let overwrite = false;
+  if (overwrite) {
+    emptyDir(root)
+  } else if (!fs.existsSync(root)) {
+    fs.mkdirSync(root, { recursive: true })
+  }
+  //determine template
   const isTypescript = (result.template as string).includes('typescript');
+  
   const configJson = {
       language : isTypescript ? 'typescript' : 'javascript', 
       paths: {
@@ -52,16 +70,15 @@ async function runInteractive() {
         cmds_dir: 'commands'
       },
   };
+  //console.log(greenBright('Writing sern.config.json to '+  result.name + "/sern.config.json"));
   
-  console.log(greenBright('Writing sern.config.json to '+  result.name + "/sern.config.json"));
-  try{
-    await writeFile(join(cwd, result.name, 'sern.config.json'), JSON.stringify(configJson), 'utf8');
-  } catch(E) {
-    console.error(redBright(E));
-    process.exit(1);
-  };
+//  try{
+//    await writeFile(path.join(cwd, result.name, 'sern.config.json'), JSON.stringify(configJson), 'utf8');
+//  } catch(E) {
+//    console.error(redBright(E));
+//    process.exit(1);
+//  };
 
-  
 }
 
 
@@ -78,7 +95,17 @@ async function init() {
     }
 }
 
-
+function emptyDir(dir: string) {
+  if (!fs.existsSync(dir)) {
+    return
+  }
+  for (const file of fs.readdirSync(dir)) {
+    if (file === '.git') {
+      continue
+    }
+    fs.rmSync(path.resolve(dir, file), { recursive: true, force: true })
+  }
+}
 
 init()
 

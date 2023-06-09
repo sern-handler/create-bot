@@ -1,10 +1,10 @@
 {
-  "name": "create",
+  "name": "@sern/create-bot",
   "version": "1.0.0",
   "main": "./dist/index.js",
   "license": "MIT",
   "bin": {
-    "@sern/create": "index.js"
+    "@sern/create-bot": "index.js"
   },
   "devDependencies": {
     "@types/minimist": "^1.2.2",

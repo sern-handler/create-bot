@@ -1,0 +1,25 @@
+{
+    "name": "ts-example",
+    "version": "1.0.0",
+    "private": true,
+    "description": "",
+    "main": "dist/index.js",
+    "scripts": {
+	"test": "echo \"Error: no test specified\" && exit 1",
+	"build": "tsc",
+	"start": "tsc && node ./dist/index.js"
+    },
+    "keywords": [
+	"typescript",
+	"sern",
+	"discord.js"
+    ],
+    "dependencies": {
+	"@sern/handler": "^3.0.0",
+	"discord.js": "latest"
+    },
+    "devDependencies": {
+	"@types/node": "^17.0.25",
+	"typescript": "^5.0"
+    }
+}
