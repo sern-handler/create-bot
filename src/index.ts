@@ -153,7 +153,6 @@ function createConfig(isTypescript: boolean) {
 }
 
 async function init() {
-    console.warn(red('Letting this tool install dependencies will crash until version 3 is fully out. It is recommended to skip until it is officially published' ));
     console.log(`Working in: `+ cwd);
     
     if(!argv.template) {
