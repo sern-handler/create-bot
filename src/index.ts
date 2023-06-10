@@ -1,16 +1,16 @@
-import { greenBright, red } from 'colorette';
+import { greenBright, magentaBright, red } from 'colorette';
 import prompt, { PromptObject } from 'prompts';
 import minimist from 'minimist';
 import path from 'path';
 import fs from 'fs';
 import assert from 'node:assert';
-
+import { spawn } from 'node:child_process'
 const argv = minimist<{
   template?: string;
   name?: string;
   overwrite?: boolean;
+  install?: 'pnpm' | 'yarn' | 'npm'
 }>(process.argv.slice(2), { boolean: true });
-
 const cwd = process.cwd();
 const templateChoices = [
     {
@@ -43,6 +43,34 @@ const name: PromptObject = {
 };
 
 
+const which_manager: PromptObject = {
+	message: `Which manager do you want to use?`,
+	name: 'manager',
+	type: 'select',
+	choices: [
+		{
+			title: 'NPM',
+			description: 'Default Package Manager',
+			selected: true,
+			value: 'npm',
+		},
+		{
+			title: 'Yarn',
+			description: 'Yarn Package Manager',
+			value: 'yarn',
+		},
+		{
+                        title: 'PNPM',
+                        description: 'PNPM Package Manager',
+                        value: 'pnpm',
+                },
+		{
+			title: 'Skip',
+			description: 'Skip selection',
+			value: 'skip',
+		},
+	],
+};
 async function runInteractive() {
   const result: prompt.Answers<'template'|'name'> = await prompt([
       template,
@@ -61,28 +89,16 @@ async function runInteractive() {
   } else if (!fs.existsSync(root)) {
     fs.mkdirSync(root, { recursive: true })
   }
-  //determine template
-  const isTypescript = (result.template as string).includes('typescript');
+  const configJson = createConfig((result.template as string).includes('typescript'))
+  await createProject(result.name, configJson, root, selectedTemplate, argv.overwrite);
   
-  const configJson = {
-      language : isTypescript ? 'typescript' : 'javascript', 
-      paths: {
-        base: 'src',
-        cmds_dir: 'commands'
-      },
-  };
-  console.log(greenBright(`overwrite: ${argv.overwrite ?? false};\ncopy: ${selectedTemplate} ${root}`));
-  await copyFolderRecursiveAsync(selectedTemplate , root);
-  console.log(greenBright('Writing dependencies.d.ts to '+  name));
-  await Promise.all([
-    fs.promises.writeFile(path.join(root, 'sern.config.json'), JSON.stringify(configJson), 'utf8'),
-    fs.promises.writeFile(path.join(root, 'src', 'dependencies.d.ts'), await fs.promises.readFile(path.join(cwd, 'dependencies.d.txt')), 'utf8')
-  ]);  
-  console.log(greenBright('Done! visit https://sern.dev for documentation and join https://sern.dev/discord! Happy hacking :)' ));
+  const installPkgs = await prompt([which_manager]);
+  runInstall(installPkgs.manager !== 'skip', root, installPkgs.manager);
+
 }
 
 
-async function runShort(templateName: string, name:string) {
+async function runShort(templateName: string, name:string, pkgManager?: 'yarn'|'npm'|'pnpm') {
     const fullTemplateName = `template-${templateName}`;
     const doesTemplateExist = templateChoices
         .some(tName => tName.title.localeCompare(fullTemplateName, undefined, { sensitivity: 'base'}));
@@ -95,27 +111,49 @@ async function runShort(templateName: string, name:string) {
         emptyDir(root);
     } else if (!fs.existsSync(root)) {
         fs.mkdirSync(root, { recursive: true })
-    }
-    const isTypescript = templateName.includes('typescript');
-    const configJson = {
-      language : isTypescript ? 'typescript' : 'javascript', 
-      paths: {
-        base: 'src',
-        cmds_dir: 'commands'
-      },
-  }; 
-  console.log(greenBright(`overwrite: ${argv.overwrite ?? false};\ncopy: ${selectedTemplate} ${root}`));
+   }
+  const configJson = createConfig(templateName.includes('typescript'));
+   
+  await createProject(name, configJson, root, selectedTemplate, argv.overwrite);
+  
+  runInstall(!pkgManager, root, pkgManager);
+}
+
+async function createProject(name: string, config: Record<string,unknown>, root: string, selectedTemplate: string, overwrite?: boolean) {
+  console.log(greenBright(`overwrite: ${overwrite ?? false};\ncopy: ${selectedTemplate} ${root}`));
   await copyFolderRecursiveAsync(selectedTemplate , root);
   console.log(greenBright('Writing sern.config.json to '+  name + "/sern.config.json"));
   console.log(greenBright('Writing dependencies.d.ts to '+  name));
   await Promise.all([
-    fs.promises.writeFile(path.join(root, 'sern.config.json'), JSON.stringify(configJson), 'utf8'),
+    fs.promises.writeFile(path.join(root, 'sern.config.json'), JSON.stringify(config), 'utf8'),
     fs.promises.writeFile(path.join(root, 'src', 'dependencies.d.ts'), await fs.promises.readFile(path.join(cwd, 'dependencies.d.txt')), 'utf8')
   ]);
-  console.log(greenBright('Done! visit https://sern.dev for documentation and join https://sern.dev/discord! Happy hacking :)' ));
+
+}
+
+async function runInstall(runInstall: boolean, cwd: string, pkgManager?:'yarn'|'npm'|'pnpm') {
+    if(!runInstall) return;
+    console.log('Installing dependencies with ', magentaBright(pkgManager!));
+    spawn(pkgManager!, ['install'], { stdio: 'inherit', cwd });
+    process.on('data', s => console.log(s.toString()));
+    process.on('error', (e) => {
+        console.error(e);
+        console.log(red('Something went wrong with installing. Please do it yourself.'))
+    })
+}
+
+function createConfig(isTypescript: boolean) {
+    return {
+      language : isTypescript ? 'typescript' : 'javascript', 
+      paths: {
+        base: 'src',
+        cmds_dir: 'commands'
+      }
+   }
 }
 
 async function init() {
+    console.warn(red('Letting this tool install dependencies will crash until version 3 is fully out. It is recommended to skip until it is officially published' ))
     console.log(`Working in: `+ cwd);
     
     if(!argv.template) {
@@ -123,8 +161,9 @@ async function init() {
     } else {
         assert(argv.name)
         assert.match(argv.name, new RegExp('^(?:@[a-z0-9-*~][a-z0-9-*._~]*/)?[a-z0-9-~][a-z0-9-._~]*$', 'g'));
-        await runShort(argv.template, argv.name);
+        await runShort(argv.template, argv.name, argv.install);
     }
+    console.log(greenBright('Done!')+  ' visit https://sern.dev for documentation and join https://sern.dev/discord! Happy hacking :)' );
 }
 
 function emptyDir(dir: string) {
