@@ -120,7 +120,7 @@ async function runShort(templateName: string, name:string, pkgManager?: 'yarn'|'
 }
 
 async function createProject(name: string, config: Record<string,unknown>, root: string, selectedTemplate: string, overwrite?: boolean) {
-  console.log(greenBright(`overwrite: ${overwrite ?? false};\ncopy: ${selectedTemplate} ${root}`));
+  console.log(greenBright(`overwrite`)+ `: ${overwrite ?? false};`+`\n`+greenBright('copy')+`: ${selectedTemplate} ${root}`);
   await copyFolderRecursiveAsync(selectedTemplate , root);
   console.log(greenBright('Writing sern.config.json to '+  name + "/sern.config.json"));
   console.log(greenBright('Writing dependencies.d.ts to '+  name));
@@ -153,7 +153,7 @@ function createConfig(isTypescript: boolean) {
 }
 
 async function init() {
-    console.warn(red('Letting this tool install dependencies will crash until version 3 is fully out. It is recommended to skip until it is officially published' ))
+    console.warn(red('Letting this tool install dependencies will crash until version 3 is fully out. It is recommended to skip until it is officially published' ));
     console.log(`Working in: `+ cwd);
     
     if(!argv.template) {
