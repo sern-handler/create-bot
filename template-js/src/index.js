@@ -1,5 +1,5 @@
 const { Client, GatewayIntentBits } = require('discord.js');
-const { Sern, single, DefaultLogging } = require('@sern/handler');
+const { Sern, single } = require('@sern/handler');
 
 const client = new Client({
 	intents: [

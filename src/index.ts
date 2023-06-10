@@ -73,11 +73,11 @@ async function runInteractive() {
   };
   console.log(greenBright(`overwrite: ${argv.overwrite ?? false};\ncopy: ${selectedTemplate} ${root}`));
   await copyFolderRecursiveAsync(selectedTemplate , root);
-  console.log(greenBright('Writing sern.config.json to '+  result.name + "/sern.config.json"));
-
-  await fs.promises.writeFile(path.join(root, 'sern.config.json'), JSON.stringify(configJson), 'utf8');
-
-  
+  console.log(greenBright('Writing dependencies.d.ts to '+  name));
+  await Promise.all([
+    fs.promises.writeFile(path.join(root, 'sern.config.json'), JSON.stringify(configJson), 'utf8'),
+    fs.promises.writeFile(path.join(root, 'src', 'dependencies.d.ts'), await fs.promises.readFile(path.join(cwd, 'dependencies.d.txt')), 'utf8')
+  ]);  
   console.log(greenBright('Done! visit https://sern.dev for documentation and join https://sern.dev/discord! Happy hacking :)' ));
 }
 
@@ -107,9 +107,12 @@ async function runShort(templateName: string, name:string) {
   console.log(greenBright(`overwrite: ${argv.overwrite ?? false};\ncopy: ${selectedTemplate} ${root}`));
   await copyFolderRecursiveAsync(selectedTemplate , root);
   console.log(greenBright('Writing sern.config.json to '+  name + "/sern.config.json"));
-
-  await fs.promises.writeFile(path.join(root, 'sern.config.json'), JSON.stringify(configJson), 'utf8');
-
+  console.log(greenBright('Writing dependencies.d.ts to '+  name));
+  await Promise.all([
+    fs.promises.writeFile(path.join(root, 'sern.config.json'), JSON.stringify(configJson), 'utf8'),
+    fs.promises.writeFile(path.join(root, 'src', 'dependencies.d.ts'), await fs.promises.readFile(path.join(cwd, 'dependencies.d.txt')), 'utf8')
+  ]);
+  console.log(greenBright('Done! visit https://sern.dev for documentation and join https://sern.dev/discord! Happy hacking :)' ));
 }
 
 async function init() {
