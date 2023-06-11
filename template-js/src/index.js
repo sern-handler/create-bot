@@ -21,17 +21,16 @@ const client = new Client({
  */
 
 async function init() {
-    await makeDependencies({
-        build: (root) =>
-            root.add({ '@sern/client': single(() => client) })
-    });
+	await makeDependencies({
+		build: (root) => root.add({ '@sern/client': single(() => client) }),
+	});
 
-    //View docs for all options
-    Sern.init({
-        defaultPrefix: '!', // removing defaultPrefix will shut down text commands
-        commands: 'src/commands',
-        // events: 'src/events' (optional),
-    });
+	//View docs for all options
+	Sern.init({
+		defaultPrefix: '!', // removing defaultPrefix will shut down text commands
+		commands: 'src/commands',
+		// events: 'src/events', //(optional)
+	});
 }
 
 init();

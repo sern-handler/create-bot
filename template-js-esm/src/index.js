@@ -20,16 +20,14 @@ const client = new Client({
  * This is used for external event modules as well
  */
 await makeDependencies({
-	build: (root) =>
-	    root
-		.add({ '@sern/client': single(() => client) })
+	build: (root) => root.add({ '@sern/client': single(() => client) }),
 });
 
 //View docs for all options
 Sern.init({
 	defaultPrefix: '!', // removing defaultPrefix will shut down text commands
 	commands: 'src/commands',
-	// events: 'src/events' (optional),
+	// events: 'src/events', //(optional)
 });
 
 client.login();

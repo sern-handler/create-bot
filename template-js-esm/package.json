@@ -1,24 +1,24 @@
 {
-    "name": "js-example",
-    "version": "1.0.0",
-    "description": "",
-    "private": true,
-    "main": "src/index.js",
-    "scripts": {
-	    "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "keywords": [
-	"javacsript",
-	"sern",
-	"discord.js"
-    ],
-    "license": "UNLICENSED",
-    "dependencies": {
-	"@sern/handler": "^latest",
-	"discord.js": "latest"
-    },
-    "devDependencies": {
-	"@types/node": "^17.0.25"
-    },
-    "type": "module"
+	"name": "js-example",
+	"version": "1.0.0",
+	"description": "",
+	"private": true,
+	"main": "src/index.js",
+	"scripts": {
+		"test": "node ./src/index.js"
+	},
+	"keywords": [
+		"javacsript",
+		"sern",
+		"discord.js"
+	],
+	"license": "UNLICENSED",
+	"dependencies": {
+		"@sern/handler": "latest",
+		"discord.js": "latest"
+	},
+	"devDependencies": {
+		"@types/node": "^17.0.25"
+	},
+	"type": "module"
 }
