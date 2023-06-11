@@ -32,4 +32,4 @@ async function init() {
 	});
 }
 
-client.login();
+init().then(() => client.login())
