@@ -14,7 +14,7 @@
 		"discord.js"
 	],
 	"dependencies": {
-		"@sern/handler": "latest",
+		"@sern/handler": "alpha",
 		"discord.js": "latest"
 	},
 	"devDependencies": {
