@@ -1,16 +1,17 @@
-import { greenBright, magentaBright, red } from 'colorette';
+import { magentaBright, red } from 'colorette';
 import prompt, { PromptObject } from 'prompts';
 import minimist from 'minimist';
 import path from 'path';
 import fs from 'fs';
 import assert from 'node:assert';
 import { spawn } from 'node:child_process'
+import { fileURLToPath } from 'node:url'
 const argv = minimist<{
   template?: string;
   name?: string;
   overwrite?: boolean;
   install?: 'pnpm' | 'yarn' | 'npm'
-}>(process.argv.slice(2), { boolean: true });
+}>(process.argv.slice(2), { boolean: true, '--': true });
 const cwd = process.cwd();
 const templateChoices = [
     {
@@ -83,7 +84,12 @@ async function runInteractive() {
       },
   );
   const root = path.join(cwd, result.name);
-  const selectedTemplate = path.join(cwd, result.template);
+  const selectedTemplate =path.resolve(
+        fileURLToPath(import.meta.url),
+        "../..",
+        result.template
+    );
+  console.log(selectedTemplate)
   if (argv.overwrite) {
     emptyDir(root);
   } else if (!fs.existsSync(root)) {
@@ -92,7 +98,7 @@ async function runInteractive() {
   const configJson = createConfig((result.template as string).includes('typescript'))
   await createProject(result.name, configJson, root, selectedTemplate, argv.overwrite);
   
-  const installPkgs = await prompt([which_manager]);
+  const installPkgs = await prompt([which_manager], { onCancel: () => { console.log("Canceled install "), process.exit(0) } });
   runInstall(installPkgs.manager !== 'skip', root, installPkgs.manager);
 
 }
@@ -106,7 +112,11 @@ async function runShort(templateName: string, name:string, pkgManager?: 'yarn'|'
         throw new Error(red('✖') + ' Could not find template: ' + templateName);
     }
     const root = path.join(cwd, name);
-    const selectedTemplate = path.join(cwd, fullTemplateName);
+    const selectedTemplate = path.resolve(
+        fileURLToPath(import.meta.url),
+        "../..",
+        fullTemplateName
+    );
     if (argv.overwrite) {
         emptyDir(root);
     } else if (!fs.existsSync(root)) {
@@ -116,17 +126,19 @@ async function runShort(templateName: string, name:string, pkgManager?: 'yarn'|'
    
   await createProject(name, configJson, root, selectedTemplate, argv.overwrite);
   
-  runInstall(!pkgManager, root, pkgManager);
+  runInstall(Boolean(pkgManager), root, pkgManager);
 }
 
 async function createProject(name: string, config: Record<string,unknown>, root: string, selectedTemplate: string, overwrite?: boolean) {
-  console.log(greenBright(`overwrite`)+ `: ${overwrite ?? false};`+`\n`+greenBright('copy')+`: ${selectedTemplate} ${root}`);
+  console.log(magentaBright(`overwrite`)+ `: ${overwrite ?? false};`+`\n`+magentaBright('copy')+`: ${selectedTemplate} ${root}`);
   await copyFolderRecursiveAsync(selectedTemplate , root);
-  console.log(greenBright('Writing sern.config.json to '+  name + "/sern.config.json"));
-  console.log(greenBright('Writing dependencies.d.ts to '+  name));
+  console.log(`Writing ${magentaBright('sern.config.json')} to ${name}/sern.config.json`);
+  console.log(`Writing ${magentaBright('dependencies.d.ts')}`);
   await Promise.all([
     fs.promises.writeFile(path.join(root, 'sern.config.json'), JSON.stringify(config), 'utf8'),
-    fs.promises.writeFile(path.join(root, 'src', 'dependencies.d.ts'), await fs.promises.readFile(path.join(cwd, 'dependencies.d.txt')), 'utf8')
+    fs.promises.writeFile(
+        path.join(root, 'src', 'dependencies.d.ts'),
+        await fs.promises.readFile(path.resolve(fileURLToPath(import.meta.url), '../..', 'dependencies.d.txt')), 'utf8')
   ]);
 
 }
@@ -154,7 +166,6 @@ function createConfig(isTypescript: boolean) {
 
 async function init() {
     console.log(`Working in: `+ cwd);
-    
     if(!argv.template) {
         await runInteractive();
     } else {
@@ -162,7 +173,7 @@ async function init() {
         assert.match(argv.name, new RegExp('^(?:@[a-z0-9-*~][a-z0-9-*._~]*/)?[a-z0-9-~][a-z0-9-._~]*$', 'g'));
         await runShort(argv.template, argv.name, argv.install);
     }
-    console.log(greenBright('Done!')+  ' visit https://sern.dev for documentation and join https://sern.dev/discord! Happy hacking :)' );
+    console.log(magentaBright('Done!')+  ' visit https://sern.dev for documentation and join https://sern.dev/discord! Happy hacking :)' );
 }
 
 function emptyDir(dir: string) {
