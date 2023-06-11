@@ -16,5 +16,12 @@
     "minimist": "^1.2.8",
     "prompts": "^2.4.2",
     "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sern-handler/create-bot"
   }
 }
