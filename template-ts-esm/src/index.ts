@@ -1,9 +1,5 @@
 import { Client, GatewayIntentBits } from 'discord.js';
-import {
-	Sern,
-        makeDependencies,
-	single,
-} from '@sern/handler';
+import { Sern, makeDependencies, single } from '@sern/handler';
 
 const client = new Client({
 	intents: [
@@ -24,15 +20,14 @@ const client = new Client({
  * This is used for external event modules as well
  */
 await makeDependencies({
-    build: (root) =>
-	root.add({ '@sern/client': single(() => client) })
+	build: (root) => root.add({ '@sern/client': single(() => client) }),
 });
 
 //View docs for all options
 Sern.init({
 	defaultPrefix: '!', // removing defaultPrefix will shut down text commands
 	commands: 'dist/commands',
-	// events: 'dist/events' (optional),
+	// events: 'dist/events', //(optional)
 });
 
 client.login();
