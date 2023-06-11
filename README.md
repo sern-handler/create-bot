@@ -35,10 +35,10 @@ npm create @sern/bot -- --template=ts-esm --name="mybot"
 npm create @sern/bot '--' --template=ts-esm --name="mybot"
 
 # yarn
-yarn create @sern/bot --template=vue --name="mybot"
+yarn create @sern/bot --template=ts-esm --name="mybot"
 
 # pnpm
-pnpm create @sern/bot --template=vue --name="mybot"
+pnpm create @sern/bot --template=ts-esm --name="mybot"
 ```
 
 Currently supported template presets include:
