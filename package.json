@@ -1,6 +1,6 @@
 {
   "name": "@sern/create-bot",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "main": "./dist/index.js",
   "license": "MIT",
   "scripts": {
