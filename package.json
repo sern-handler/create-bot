@@ -1,13 +1,13 @@
 {
   "name": "@sern/create-bot",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "main": "./dist/index.js",
   "license": "MIT",
   "scripts": {
     "build": "tsc"
   },
   "bin": {
-    "@sern/create-bot": "index.js"
+    "mkbot": "index.js"
   },
   "files": [
     "index.js",
