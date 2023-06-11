@@ -1,6 +1,6 @@
 {
   "name": "@sern/create-bot",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "main": "./dist/index.js",
   "license": "MIT",
   "scripts": {
@@ -30,5 +30,6 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sern-handler/create-bot"
-  }
+  },
+  "type": "module"
 }
