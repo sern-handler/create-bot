@@ -9,6 +9,11 @@
   "bin": {
     "@sern/create-bot": "index.js"
   },
+  "files": [
+    "index.js",
+    "dist",
+    "template-*"
+  ],
   "devDependencies": {
     "@types/minimist": "^1.2.2",
     "@types/prompts": "^2.4.4",
