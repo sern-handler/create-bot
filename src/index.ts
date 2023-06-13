@@ -96,7 +96,7 @@ async function runInteractive() {
 		fs.mkdirSync(root, { recursive: true });
 	}
 	const configJson = createConfig(
-		(result.template as string).includes('typescript')
+		(result.template as string).includes('ts')
 	);
 	await createProject(
 		result.name,
@@ -139,7 +139,7 @@ async function runShort(
 	} else if (!fs.existsSync(root)) {
 		fs.mkdirSync(root, { recursive: true });
 	}
-	const configJson = createConfig(templateName.includes('typescript'));
+	const configJson = createConfig(templateName.includes('ts'));
 
 	await createProject(name, configJson, root, selectedTemplate, argv.overwrite);
 
