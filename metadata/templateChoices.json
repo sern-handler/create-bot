@@ -1,14 +1,18 @@
 [
     {
-		"title": "ts"
+		"title": "Typescript",
+		"value": "ts"
 	},
 	{
-		"title": "ts-esm"
+		"title": "Typescript with ESM",
+		"value": "ts-esm"
 	},
 	{
-		"title": "js"
+		"title": "Javascript",
+		"value": "js"
 	},
 	{
-		"title": "js-esm"
+		"title": "Javascript with ESM",
+		"value": "js-esm"
 	}
 ]
