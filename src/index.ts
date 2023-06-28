@@ -192,7 +192,7 @@ async function runInstall(
 ) {
 	if (!runInstall) return;
 	console.log('Installing dependencies with ', magentaBright(pkgManager!));
-	spawn(pkgManager!, ['install'], { stdio: 'inherit', cwd });
+	spawn(pkgManager!, ['install'], { stdio: 'inherit', cwd, shell: true });
 	process.on('data', (s) => console.log(s.toString()));
 	process.on('error', (e) => {
 		console.error(e);
