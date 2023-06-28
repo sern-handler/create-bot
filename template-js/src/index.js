@@ -1,3 +1,5 @@
+/// <reference path="dependencies.d.ts" />
+
 const { Client, GatewayIntentBits } = require('discord.js');
 const { Sern, single } = require('@sern/handler');
 
