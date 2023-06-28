@@ -1,3 +1,5 @@
+/// <reference path="dependencies.d.ts" />
+
 import { Client, GatewayIntentBits } from 'discord.js';
 import { Sern, single } from '@sern/handler';
 
