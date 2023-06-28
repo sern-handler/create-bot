@@ -1,6 +1,6 @@
 const { CommandType, commandModule } = require('@sern/handler');
 
-exports.default = commandModule({
+export default commandModule({
 	type: CommandType.Both,
 	plugins: [],
 	description: 'A ping command',
