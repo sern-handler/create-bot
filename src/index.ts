@@ -168,7 +168,7 @@ async function createProject(
 	await Promise.all([
 		fs.promises.writeFile(
 			path.join(root, 'sern.config.json'),
-			JSON.stringify(config),
+			JSON.stringify(config, null, 2),
 			'utf8'
 		),
 		fs.promises.writeFile(
@@ -207,7 +207,7 @@ function createConfig(isTypescript: boolean) {
 		language: isTypescript ? 'typescript' : 'javascript',
 		paths: {
 			base: 'src',
-			cmds_dir: 'commands',
+			commands: 'commands',
 		},
 	};
 }
