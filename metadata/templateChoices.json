@@ -14,5 +14,9 @@
 	{
 		"title": "Javascript with ESM",
 		"value": "js-esm"
-	}
+	},
+        {
+                "title": "Rutile",
+                "value": "ts-rutile"
+        }
 ]

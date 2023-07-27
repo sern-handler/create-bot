@@ -6,6 +6,7 @@ import fs from 'fs';
 import assert from 'node:assert';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+
 const argv = minimist<{
 	template?: string;
 	name?: string;
@@ -14,18 +15,11 @@ const argv = minimist<{
 }>(process.argv.slice(2), { boolean: true, '--': true });
 const cwd = process.cwd();
 const templateChoices = [
-	{
-		title: 'ts',
-	},
-	{
-		title: 'ts-esm',
-	},
-	{
-		title: 'js',
-	},
-	{
-		title: 'js-esm',
-	},
+	{ title: 'ts' },
+	{ title: 'ts-esm' },
+	{ title: 'js' },
+	{ title: 'js-esm' },
+        { title: 'ts-rutile' }
 ];
 const template: PromptObject = {
 	message: 'Choose template',
@@ -79,7 +73,8 @@ async function runInteractive() {
 		[template, name],
 		{
 			onCancel: () => {
-				throw new Error(red('✖') + ' Operation cancelled');
+			    console.log(red('✖') + ' Operation cancelled');
+                            process.exit(0)
 			},
 		}
 	);

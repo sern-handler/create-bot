@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+	"moduleResolution": "node",
+	"resolveJsonModule": true,
+	"target": "ESNext",
+	"module": "ESNext",
+	"outDir": "dist",
+	"rootDir": "src",
+	"strict": true,
+	"esModuleInterop": true,
+	"noImplicitAny": true,
+	"baseUrl": "./src",
+	"paths": {
+		"#plugins/*": ["plugins/*"],
+		"#services*": ["services/*"],
+		"#lib/*": ["lib/*"]
+	},
+	"strictNullChecks": true,
+	"skipLibCheck": true,
+	"forceConsistentCasingInFileNames": true
+    }
+}
