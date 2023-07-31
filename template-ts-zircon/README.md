@@ -1,4 +1,3 @@
-# Discord Bot Template as a Service
 
 ## Prerequisites 
 - Average understanding of discord.js, sern handler, typescript, mongoose

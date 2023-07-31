@@ -14,7 +14,7 @@
 	],
 	"license": "UNLICENSED",
 	"dependencies": {
-		"@sern/handler": "alpha",
+		"@sern/handler": "latest",
 		"discord.js": "latest",
 		"dotenv": "^16.3.1",
 		"mongoose": "^7.4.1",

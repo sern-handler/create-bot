@@ -19,7 +19,7 @@ const templateChoices = [
 	{ title: 'ts-esm' },
 	{ title: 'js' },
 	{ title: 'js-esm' },
-        { title: 'ts-rutile' }
+        { title: 'ts-zircon' }
 ];
 const template: PromptObject = {
 	message: 'Choose template',
