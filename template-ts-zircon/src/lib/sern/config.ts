@@ -1,4 +1,4 @@
-import { ClientOptions, IntentsBitField } from "discord.js";
+import { type ClientOptions, IntentsBitField } from "discord.js";
 
 const intents =	IntentsBitField.Flags.Guilds |
 	        IntentsBitField.Flags.GuildMembers |
