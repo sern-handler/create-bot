@@ -2,8 +2,8 @@ import mongoose, { Mongoose } from 'mongoose'
 import type { Init, Logging } from '@sern/handler'
 export class MongooseService implements Init {
     #mongoose!: Mongoose
-    #warns!: typeof import('#lib/warn-schema').warns;
-    #users!: typeof import('#lib/user-schema').users;
+    #warns!: typeof import('../warn-schema').warns;
+    #users!: typeof import('../user-schema').users;
     constructor(private logger: Logging) {}
 
     async init() {
@@ -15,8 +15,8 @@ export class MongooseService implements Init {
         }
         //In the init function, we're dynamically importing schemas to keep our initializations tidy.
         // Also promotes code splitting and only loading whats necessary
-        this.#warns = await import('#lib/warn-schema').then(module => module.warns)
-        this.#users = await import('#lib/user-schema').then(module => module.users)
+        this.#warns = await import('../warn-schema').then(module => module.warns)
+        this.#users = await import('../user-schema').then(module => module.users)
     }
 
     async addWarning(user_id: string) {

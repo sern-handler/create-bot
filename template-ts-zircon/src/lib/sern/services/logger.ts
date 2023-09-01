@@ -1,4 +1,4 @@
-import { LogPayload, Logging } from "@sern/handler";
+import type { LogPayload, Logging } from "@sern/handler";
 import pino from "pino";
 import { resolve } from 'path'
 /**
