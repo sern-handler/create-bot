@@ -1,4 +1,4 @@
-import { Service, commandModule, discordEvent } from "@sern/handler";
+import { discordEvent } from "@sern/handler";
 
 
 export default discordEvent({
