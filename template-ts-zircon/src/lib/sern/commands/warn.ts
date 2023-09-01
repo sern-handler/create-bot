@@ -1,4 +1,4 @@
-import { requirePermission } from "#plugins/requirePermission.js";
+import { requirePermission } from "../plugins/requirePermission.js";
 import { CommandType, Services, commandModule } from "@sern/handler";
 import { ApplicationCommandOptionType, PermissionFlagsBits, User } from 'discord.js'
 
