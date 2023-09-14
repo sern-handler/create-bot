@@ -1,4 +1,4 @@
-const { CommandType, commandModule } = require('@sern/handler');
+import { CommandType, commandModule } from '@sern/handler';
 
 export default commandModule({
 	type: CommandType.Both,
