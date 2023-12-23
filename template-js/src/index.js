@@ -16,15 +16,12 @@ const client = new Client({
  * Where all of your dependencies are composed.
  * '@sern/client' is usually your Discord Client.
  * View documentation for pluggable dependencies
- * Configure your dependency root to your liking.
- * It follows the npm package iti https://itijs.org/.
- * Use this function to access all of your dependencies.
  * This is used for external event modules as well
  */
 
 async function init() {
-	await makeDependencies({
-		build: (root) => root.add({ '@sern/client': single(() => client) }),
+	await makeDependencies(({ add }) => {
+	    add('@sern/client', single(() => client));
 	});
 
 	//View docs for all options
