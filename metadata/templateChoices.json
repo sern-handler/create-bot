@@ -1,8 +1,13 @@
 [
-    {
+        {
+		"title": "Typescript Integrated (uses sern cli)",
+		"value": "ts-integrated"
+	},
+        {
 		"title": "Typescript",
 		"value": "ts"
 	},
+        
 	{
 		"title": "Typescript with ESM",
 		"value": "ts-esm"
