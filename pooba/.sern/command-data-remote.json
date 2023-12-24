@@ -1,0 +1,21 @@
+{
+    "global": [
+        {
+            "id": "1138774636834852924",
+            "application_id": "1061421834341462036",
+            "version": "1187584271431499847",
+            "default_member_permissions": null,
+            "type": 1,
+            "name": "ping",
+            "name_localizations": null,
+            "description": "A ping command",
+            "description_localizations": null,
+            "dm_permission": true,
+            "contexts": null,
+            "integration_types": [
+                0
+            ],
+            "nsfw": false
+        }
+    ]
+}
