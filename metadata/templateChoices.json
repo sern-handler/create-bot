@@ -4,6 +4,11 @@
 		"value": "ts+cli"
 	},
         {
+		"title": "Javascript w/ sern cli & ESM",
+		"value": "js+cli"
+	},
+
+        {
 		"title": "Typescript",
 		"value": "ts"
 	},
