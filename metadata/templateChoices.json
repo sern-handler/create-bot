@@ -1,6 +1,6 @@
 [
         {
-		"title": "Typescript Integrated (uses sern cli)",
+		"title": "Typescript w/ sern cli & ESM",
 		"value": "ts+cli"
 	},
         {
