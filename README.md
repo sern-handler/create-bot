@@ -47,3 +47,5 @@ Currently supported template presets include:
 - `ts-esm`
 - `js`
 - `js-esm`
+- `js+cli`
+- `ts+cli`
