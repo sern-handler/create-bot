@@ -32,7 +32,7 @@ npm create @sern/bot --template=ts-esm --name="mybot"
 npm create @sern/bot -- --template=ts-esm --name="mybot"
 
 # !!!!POWERSHELL SYNTAX
-npm create @sern/bot '--' --template=ts-esm --name="mybot"
+npm create @sern/bot '--' --template=ts-esm --name="mybot" --cli
 
 # yarn
 yarn create @sern/bot --template=ts-esm --name="mybot"
