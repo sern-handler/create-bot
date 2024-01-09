@@ -11,7 +11,7 @@ import semver from 'semver';
 const argv = minimist<{
 	template?: string;
 	name?: string;
-        'no-build'?: boolean;
+        'cli'?: boolean;
 	overwrite?: boolean;
 	install?: 'pnpm' | 'yarn' | 'npm';
 }>(process.argv.slice(2), { boolean: true, '--': true });
@@ -101,19 +101,46 @@ async function runInteractive() {
 	    selectedTemplate,
 	    argv.overwrite
 	);
-        
-	const installPkgs = await prompt([which_manager], {
-	    onCancel: () => {
-		console.log('Canceled install '), process.exit(0);
+        const install = await prompt([
+            {
+              type: 'confirm',
+              name: 'cli',
+              message: 'install cli? (If you installed a template with `cli`, This is required!!)\n',
+              initial: true
+            },
+            which_manager
+        ],
+        { onCancel: () => {
+                console.log('Canceled install '), process.exit(0);
 	    },
-	});
-	runInstall(installPkgs.manager !== 'skip', root, installPkgs.manager);
+	})
+
+        if(install.cli) {
+            const jsonDeps = JSON.parse(String(execSync('npm ls -g --json')));
+            const cliVersion = jsonDeps.dependencies['@sern/cli']?.version;
+            if(semver.satisfies(cliVersion, '1.x')) {
+                console.log('You already have a good enough sern cli.'); 
+            } else {
+                console.log(`Installing ${magentaBright('@sern/cli')}:`)
+                await new Promise((resolve, reject) => {
+                    const child = spawn('npm', ['install', '-g', '@sern/cli@latest'], {  cwd, shell: true });
+                    child.on('data', (s) => console.log(s.toString()));
+                    child.on('error', (e) => {
+                        console.error(e);
+                        console.log(red('Something went wrong with installing. Please do it yourself.'));
+                        reject();
+                    });
+                    child.on('close', resolve)
+                })
+            }
+        }
+	await runInstall(install.manager !== 'skip', root, install.manager);
 }
 
 async function runShort(
 	templateName: string,
 	name: string,
-        usebuild: boolean,
+        installCli: boolean,
 	pkgManager?: 'yarn' | 'npm' | 'pnpm'
 ) {
 	const fullTemplateName = `template-${templateName}`;
@@ -139,8 +166,29 @@ async function runShort(
 	const configJson = createConfig(templateName.includes('ts'));
 
 	await createProject(name, configJson, root, selectedTemplate, argv.overwrite);
+ 
+        if(installCli) {
+            const jsonDeps = JSON.parse(String(execSync('npm ls -g --json')));
+            const cliVersion = jsonDeps.dependencies['@sern/cli']?.version;
+            if(semver.satisfies(cliVersion, '1.x')) {
+                console.log('You already have a good enough sern cli.'); 
+            } else {
+                console.log(`Installing ${magentaBright('@sern/cli')}:`)
+                await new Promise((resolve, reject) => {
+                    const child = spawn('npm', ['install', '-g', '@sern/cli@latest'], {  cwd, shell: true });
+                    child.stdout.pipe(process.stdout)
+                    child.on('data', (s) => console.log(s.toString()));
+                    child.on('error', (e) => {
+                        console.error(e);
+                        console.log(red('Something went wrong with installing. Please do it yourself.'));
+                        reject();
+                    });
+                    child.on('close', resolve)
+                })
+            }
+        }
 
-	runInstall(Boolean(pkgManager), root, pkgManager);
+	await runInstall(Boolean(pkgManager), root, pkgManager);
 }
 
 async function createProject(
@@ -191,13 +239,18 @@ async function runInstall(
     pkgManager?: 'yarn' | 'npm' | 'pnpm'
 ) {
 	if (!runInstall) return;
-	console.log('Installing dependencies with ', magentaBright(pkgManager!));
-	spawn(pkgManager!, ['install'], { stdio: 'inherit', cwd, shell: true });
-	process.on('data', (s) => console.log(s.toString()));
-	process.on('error', (e) => {
-		console.error(e);
-		console.log(red('Something went wrong with installing. Please do it yourself.'));
-	});
+        await new Promise((resolve, reject) => {
+            console.log('Installing dependencies with ', magentaBright(pkgManager!));
+            const child = spawn(pkgManager!, ['install'], { stdio: 'pipe', cwd, shell: true });
+            child.stdout.pipe(process.stdout)
+            child.on('data', (s) => console.log(s.toString()));
+            child.on('error', (e) => {
+                    console.error(e);
+                    console.log(red('Something went wrong with installing. Please do it yourself.'));
+                    reject();
+            });
+            child.on('exit', resolve)
+        })
 }
 
 function createConfig(isTypescript: boolean) {
@@ -223,37 +276,10 @@ async function init() {
                         '^(?:@[a-z0-9-*~][a-z0-9-*._~]*/)?[a-z0-9-~][a-z0-9-._~]*$',
                         'g'),
                     "project name does not match the regular expression");
-            const usebuild = argv['no-build'] ?? true;
-	    await runShort(argv.template, argv.name, usebuild, argv.install);
+            const installCli = argv['cli'] ?? false;
+	    await runShort(argv.template, argv.name, installCli, argv.install);
 	}
-	const installCli = await prompt([{
-              type: 'confirm',
-              name: 'installCli',
-              message: 'install cli? (If you installed a template with `cli`, This is required!!)\n',
-              initial: true
-        }])
-        if(installCli) {
-            const jsonDeps = JSON.parse(String(execSync('npm ls -g --json')));
-            const cliVersion = jsonDeps.dependencies['@sern/cli']?.version;
-            if(semver.satisfies(cliVersion, '1.x')) {
-                console.log('You already have a good enough sern cli.'); 
-            } else {
-                console.log(`Installing ${magentaBright('@sern/cli')}:`)
-                await new Promise((resolve, reject) => {
-                    spawn('npm', ['install', '-g', '@sern/cli@latest'], { stdio: 'inherit', cwd, shell: true });
-                    process.on('data', (s) => console.log(s.toString()));
-                    process.on('error', (e) => {
-                        console.error(e);
-                        console.log(red('Something went wrong with installing. Please do it yourself.'));
-                        reject();
-                    });
-                    process.on('exit', resolve)
-                })
-                
-
-            }
-            
-        }
+	
         console.log(magentaBright('Done!')
 	    + ' visit https://sern.dev for documentation and join https://sern.dev/discord! Happy hacking :)');
 
