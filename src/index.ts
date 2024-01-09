@@ -4,8 +4,9 @@ import minimist from 'minimist';
 import path from 'path';
 import fs from 'fs';
 import assert from 'node:assert';
-import { spawn, } from 'node:child_process';
+import { spawn, execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import semver from 'semver';
 
 const argv = minimist<{
 	template?: string;
@@ -100,7 +101,7 @@ async function runInteractive() {
 	    selectedTemplate,
 	    argv.overwrite
 	);
-
+        
 	const installPkgs = await prompt([which_manager], {
 	    onCancel: () => {
 		console.log('Canceled install '), process.exit(0);
@@ -211,8 +212,9 @@ function createConfig(isTypescript: boolean) {
 
 async function init() {
 	console.log(`Working in: ` + cwd);
+        
 	if (!argv.template) {
-		await runInteractive();
+	    await runInteractive();
 	} else {
 	    assert(argv.name);
 	    assert.match(
@@ -224,9 +226,37 @@ async function init() {
             const usebuild = argv['no-build'] ?? true;
 	    await runShort(argv.template, argv.name, usebuild, argv.install);
 	}
-	console.log(
-	    magentaBright('Done!')
+	const installCli = await prompt([{
+              type: 'confirm',
+              name: 'installCli',
+              message: 'install cli? (If you installed a template with `cli`, This is required!!)\n',
+              initial: true
+        }])
+        if(installCli) {
+            const jsonDeps = JSON.parse(String(execSync('npm ls -g --json')));
+            const cliVersion = jsonDeps.dependencies['@sern/cli']?.version;
+            if(semver.satisfies(cliVersion, '1.x')) {
+                console.log('You already have a good enough sern cli.'); 
+            } else {
+                console.log(`Installing ${magentaBright('@sern/cli')}:`)
+                await new Promise((resolve, reject) => {
+                    spawn('npm', ['install', '-g', '@sern/cli@latest'], { stdio: 'inherit', cwd, shell: true });
+                    process.on('data', (s) => console.log(s.toString()));
+                    process.on('error', (e) => {
+                        console.error(e);
+                        console.log(red('Something went wrong with installing. Please do it yourself.'));
+                        reject();
+                    });
+                    process.on('exit', resolve)
+                })
+                
+
+            }
+            
+        }
+        console.log(magentaBright('Done!')
 	    + ' visit https://sern.dev for documentation and join https://sern.dev/discord! Happy hacking :)');
+
 }
 
 function emptyDir(dir: string) {
@@ -245,7 +275,7 @@ async function copyFolderRecursiveAsync(source: string, target: string) {
 	try {
 	    // Create target folder if it doesn't exist
 	    if (!fs.existsSync(target)) {
-		    fs.mkdirSync(target);
+                fs.mkdirSync(target);
 	    }
 
             // Get all files and folders in the source folder
