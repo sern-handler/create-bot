@@ -85,7 +85,6 @@ async function runInteractive() {
 		'../..',
 		result.template
 	);
-	console.log(selectedTemplate);
 	if (argv.overwrite) {
 		emptyDir(root);
 	} else if (!fs.existsSync(root)) {
