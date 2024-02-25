@@ -4,7 +4,7 @@
  * Service(s) api rely on this file to provide a better developer experience.
  */
 
-import type { SernEmitter, Logging, CoreModuleStore, ModuleManager, ErrorHandling, CoreDependencies, Singleton } from '@sern/handler'
+import type { Logging, ErrorHandling, CoreDependencies, Singleton } from '@sern/handler'
 import type { Client } from 'discord.js'
 
 /**
