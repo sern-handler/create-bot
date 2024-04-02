@@ -1,23 +1,25 @@
 {
 	"name": "js-example",
 	"version": "1.0.0",
-	"description": "",
 	"private": true,
+	"description": "",
 	"main": "src/index.js",
 	"scripts": {
-		"test": "node ./src/index.js"
+	    "start": "node .",
+            "commands:publish": "sern commands publish"
 	},
 	"keywords": [
-		"javacsript",
-		"sern",
-		"discord.js"
+            "javascript",
+            "sern",
+            "discord.js"
 	],
-	"license": "UNLICENSED",
 	"dependencies": {
-		"@sern/handler": "^3.0.3",
-		"discord.js": "latest"
+	    "@sern/handler": "^3.0.3",
+	    "discord.js": "latest",
+            "dotenv": "^16.3.1"
 	},
 	"devDependencies": {
-		"@types/node": "^17.0.25"
-	}
+	    "@types/node": "^18.0.25"
+	},
+        "type": "module"
 }

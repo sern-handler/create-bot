@@ -32,7 +32,7 @@ npm create @sern/bot --template=ts-esm --name="mybot"
 npm create @sern/bot -- --template=ts-esm --name="mybot"
 
 # !!!!POWERSHELL SYNTAX
-npm create @sern/bot '--' --template=ts-esm --name="mybot" --cli
+npm create @sern/bot '--' --template=ts-esm --name="mybot"
 
 # yarn
 yarn create @sern/bot --template=ts-esm --name="mybot"
@@ -44,8 +44,4 @@ pnpm create @sern/bot --template=ts-esm --name="mybot"
 Currently supported template presets include:
 
 - `ts`
-- `ts-esm`
 - `js`
-- `js-esm`
-- `js+cli`
-- `ts+cli`

@@ -5,8 +5,10 @@
 	"description": "",
 	"main": "dist/index.js",
 	"scripts": {
-		"build": "tsc",
-		"start": "tsc && node ./dist/index.js"
+	    "build": "sern build",
+	    "start": "node .",
+            "install": "sern build",
+            "commands:publish": "sern commands publish"
 	},
 	"keywords": [
 		"typescript",
@@ -15,10 +17,12 @@
 	],
 	"dependencies": {
 		"@sern/handler": "^3.0.3",
-		"discord.js": "latest"
+		"discord.js": "latest",
+                "dotenv": "^16.3.1"
 	},
 	"devDependencies": {
 		"@types/node": "^17.0.25",
 		"typescript": "^5.0"
-	}
+	},
+        "type": "module"
 }

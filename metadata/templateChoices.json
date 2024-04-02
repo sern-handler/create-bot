@@ -1,27 +1,10 @@
 [
         {
-		"title": "Typescript with sern cli & ESM",
-		"value": "ts+cli"
-	},
-        {
-		"title": "Javascript with sern cli & ESM",
-		"value": "js+cli"
-	},
-        {
-		"title": "Typescript",
-		"value": "ts"
-	},
-        
-	{
-		"title": "Typescript with ESM",
-		"value": "ts-esm"
+	    "title": "Typescript",
+	    "value": "ts"
 	},
 	{
-		"title": "Javascript",
-		"value": "js"
-	},
-	{
-		"title": "Javascript with ESM",
-		"value": "js-esm"
+	    "title": "Javascript",
+	    "value": "js"
 	}
 ]

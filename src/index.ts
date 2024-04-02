@@ -101,12 +101,6 @@ async function runInteractive() {
 	    argv.overwrite
 	);
         const install = await prompt([
-            {
-              type: 'confirm',
-              name: 'cli',
-              message: 'install cli? (If you installed a template with `cli`, This is required!!)\n',
-              initial: true
-            },
             which_manager
         ],
         { onCancel: () => {
@@ -114,24 +108,22 @@ async function runInteractive() {
 	    },
 	})
 
-        if(install.cli) {
-            const jsonDeps = JSON.parse(String(execSync('npm ls -g --json')));
-            const cliVersion = jsonDeps.dependencies['@sern/cli']?.version;
-            if(semver.satisfies(cliVersion, '1.x')) {
-                console.log('You already have a good enough sern cli.'); 
-            } else {
-                console.log(`Installing ${magentaBright('@sern/cli')}:`)
-                await new Promise((resolve, reject) => {
-                    const child = spawn('npm', ['install', '-g', '@sern/cli@latest'], {  cwd, shell: true });
-                    child.on('data', (s) => console.log(s.toString()));
-                    child.on('error', (e) => {
-                        console.error(e);
-                        console.log(red('Something went wrong with installing. Please do it yourself.'));
-                        reject();
-                    });
-                    child.on('close', resolve)
-                })
-            }
+        const jsonDeps = JSON.parse(String(execSync('npm ls -g --json')));
+        const cliVersion = jsonDeps.dependencies['@sern/cli']?.version;
+        if(semver.satisfies(cliVersion, '1.x')) {
+            console.log('You already have a good enough sern cli.'); 
+        } else {
+            console.log(`Installing ${magentaBright('@sern/cli')}:`)
+            await new Promise((resolve, reject) => {
+                const child = spawn('npm', ['install', '-g', '@sern/cli@latest'], {  cwd, shell: true });
+                child.on('data', (s) => console.log(s.toString()));
+                child.on('error', (e) => {
+                    console.error(e);
+                    console.log(red('Something went wrong with installing. Please do it yourself.'));
+                    reject();
+                });
+                child.on('close', resolve)
+            })
         }
 	await runInstall(install.manager !== 'skip', root, install.manager);
 }
@@ -275,8 +267,7 @@ async function init() {
                         '^(?:@[a-z0-9-*~][a-z0-9-*._~]*/)?[a-z0-9-~][a-z0-9-._~]*$',
                         'g'),
                     "project name does not match the regular expression");
-            const installCli = argv['cli'] ?? false;
-	    await runShort(argv.template, argv.name, installCli, argv.install);
+	    await runShort(argv.template, argv.name, true, argv.install);
 	}
 	
         console.log(magentaBright('Done!')
