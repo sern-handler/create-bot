@@ -4,9 +4,8 @@ import minimist from 'minimist';
 import path from 'path';
 import fs from 'fs';
 import assert from 'node:assert';
-import { spawn, execSync } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import semver from 'semver';
 
 const argv = minimist<{
 	template?: string;
@@ -21,6 +20,7 @@ const packageDirectory = fileURLToPath(import.meta.url);
 const metadataPath = path.resolve(packageDirectory, "../..", "metadata", "templateChoices.json");
 const templateChoices = 
     JSON.parse(fs.readFileSync(metadataPath, 'utf8')) as { title: string, value: string }[];
+
 
 const template: PromptObject = {
 	message: 'Choose template',
@@ -70,6 +70,30 @@ const which_manager: PromptObject = {
 		},
 	],
 };
+const which_install_cli = {
+    message: `How do you want to install the sern/cli?`,
+    name: 'manager',
+    type: 'select',
+    choices: [
+            {
+                    title: 'NPM',
+                    description: 'Default Package Manager',
+                    selected: true,
+                    value: 'npm',
+            },
+            {
+                    title: 'bun',
+                    description: 'Bun',
+                    value: 'bun',
+            },
+            {
+                    title: 'Skip (Not recommended)',
+                    description: 'Instead of installing globally, use bunx or npx to manage projects',
+                    value: 'skip',
+            },
+    ],
+} as const
+
 async function runInteractive() {
 	const result: prompt.Answers<'template' | 'name' | 'manageBuild'> = await prompt(
 		[template, name],
@@ -91,8 +115,7 @@ async function runInteractive() {
 		fs.mkdirSync(root, { recursive: true });
 	}
 
-	const configJson = createConfig(
-	    (result.template as string).includes('ts'));
+	const configJson = createConfig((result.template as string).includes('ts'));
 	await createProject(
 	    result.name,
 	    configJson,
@@ -108,30 +131,26 @@ async function runInteractive() {
 	    },
 	})
 
-        const jsonDeps = JSON.parse(String(execSync('npm ls -g --json')));
-        const cliVersion = jsonDeps.dependencies['@sern/cli']?.version;
-        if(semver.satisfies(cliVersion, '1.x')) {
-            console.log('You already have a good enough sern cli.'); 
-        } else {
-            console.log(`Installing ${magentaBright('@sern/cli')}:`)
-            await new Promise((resolve, reject) => {
-                const child = spawn('npm', ['install', '-g', '@sern/cli@latest'], {  cwd, shell: true });
-                child.on('data', (s) => console.log(s.toString()));
-                child.on('error', (e) => {
-                    console.error(e);
-                    console.log(red('Something went wrong with installing. Please do it yourself.'));
-                    reject();
-                });
-                child.on('close', resolve)
-            })
-        }
+        console.log(`Installing ${magentaBright('@sern/cli')}:`)
+
+        //@ts-ignore
+        const selection = await prompt([which_install_cli]) 
+        await new Promise((resolve, reject) => {
+            const child = spawn(selection.manager, ['install', '-g', '@sern/cli@latest'], {  cwd, shell: true });
+            child.on('data', (s) => console.log(s.toString()));
+            child.on('error', (e) => {
+                console.error(e);
+                console.log(red('Something went wrong with installing. Please do it yourself.'));
+                reject();
+            });
+            child.on('close', resolve)
+        })
 	await runInstall(install.manager !== 'skip', root, install.manager);
 }
 
 async function runShort(
 	templateName: string,
 	name: string,
-        installCli: boolean,
 	pkgManager?: 'yarn' | 'npm' | 'pnpm'
 ) {
 	const fullTemplateName = `template-${templateName}`;
@@ -144,11 +163,7 @@ async function runShort(
 		throw new Error(red('✖') + ' Could not find template: ' + templateName);
 	}
 	const root = path.join(cwd, name);
-	const selectedTemplate = path.resolve(
-            packageDirectory,
-	    '../..',
-	    fullTemplateName
-	);
+	const selectedTemplate = path.resolve(packageDirectory, '../..', fullTemplateName);
 	if (argv.overwrite) {
 		emptyDir(root);
 	} else if (!fs.existsSync(root)) {
@@ -157,27 +172,20 @@ async function runShort(
 	const configJson = createConfig(templateName.includes('ts'));
 
 	await createProject(name, configJson, root, selectedTemplate, argv.overwrite);
- 
-        if(installCli) {
-            const jsonDeps = JSON.parse(String(execSync('npm ls -g --json')));
-            const cliVersion = jsonDeps.dependencies['@sern/cli']?.version;
-            if(semver.satisfies(cliVersion, '1.x')) {
-                console.log('You already have a good enough sern cli.'); 
-            } else {
-                console.log(`Installing ${magentaBright('@sern/cli')}:`)
-                await new Promise((resolve, reject) => {
-                    const child = spawn('npm', ['install', '-g', '@sern/cli@latest'], {  cwd, shell: true });
-                    child.stdout.pipe(process.stdout)
-                    child.on('data', (s) => console.log(s.toString()));
-                    child.on('error', (e) => {
-                        console.error(e);
-                        console.log(red('Something went wrong with installing. Please do it yourself.'));
-                        reject();
-                    });
-                    child.on('close', resolve)
-                })
-            }
-        }
+        //@ts-ignore
+        const selection = await prompt([which_install_cli]) 
+        console.log(`Installing ${magentaBright('@sern/cli')}:`)
+        await new Promise((resolve, reject) => {
+            const child = spawn(selection.manager, ['install', '-g', '@sern/cli@latest'], {  cwd, shell: true });
+            child.stdout.pipe(process.stdout)
+            child.on('data', (s) => console.log(s.toString()));
+            child.on('error', (e) => {
+                console.error(e);
+                console.log(red('Something went wrong with installing. Please do it yourself.'));
+                reject();
+            });
+            child.on('close', resolve)
+        })
 
 	await runInstall(Boolean(pkgManager), root, pkgManager);
 }
@@ -190,13 +198,8 @@ async function createProject(
 	overwrite?: boolean
 ) {
 
-	console.log(
-		magentaBright(`overwrite`) +
-			`: ${overwrite ?? false};` +
-			`\n` +
-			magentaBright('copy') +
-			`: ${selectedTemplate} ${root}`
-	);
+	console.log(magentaBright(`overwrite`) + `: ${overwrite ?? false};\n` +
+		    magentaBright('copy') + `: ${selectedTemplate} ${root}`);
 	await copyFolderRecursiveAsync(selectedTemplate, root);
 	console.log(
 	    `Writing ${magentaBright('sern.config.json')} to ${name}/sern.config.json`
@@ -267,11 +270,11 @@ async function init() {
                         '^(?:@[a-z0-9-*~][a-z0-9-*._~]*/)?[a-z0-9-~][a-z0-9-._~]*$',
                         'g'),
                     "project name does not match the regular expression");
-	    await runShort(argv.template, argv.name, true, argv.install);
+	    await runShort(argv.template, argv.name, argv.install);
 	}
 	
-        console.log(magentaBright('Done!')
-	    + ' visit https://sern.dev for documentation and join https://sern.dev/discord! Happy hacking :)');
+        console.log(
+            magentaBright('Done!'), 'visit https://sern.dev for documentation and join https://sern.dev/discord! Happy hacking :)');
 
 }
 
@@ -288,33 +291,11 @@ function emptyDir(dir: string) {
 }
 
 async function copyFolderRecursiveAsync(source: string, target: string) {
-	try {
-	    // Create target folder if it doesn't exist
-	    if (!fs.existsSync(target)) {
-                fs.mkdirSync(target);
-	    }
-
-            // Get all files and folders in the source folder
-            const files = await fs.promises.readdir(source);
-
-            for (const file of files) {
-                const currentSource = path.join(source, file);
-                const currentTarget = path.join(target, file);
-
-                // Check if the current item is a file or a folder
-                const stats = await fs.promises.stat(currentSource);
-
-                if (stats.isDirectory()) {
-                        // Recursively copy the subfolder
-                        await copyFolderRecursiveAsync(currentSource, currentTarget);
-                } else {
-                        // Copy the file
-                        await fs.promises.copyFile(currentSource, currentTarget);
-                }
-            }
-	} catch (err) {
-		throw Error('An error occurred: ' + err);
-	}
+    try {
+        await fs.promises.cp(source, target, { recursive: true });
+    } catch (err) {
+        console.error('Error moving directory:', err);
+    }
 }
 
 init();

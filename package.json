@@ -1,6 +1,6 @@
 {
   "name": "@sern/create-bot",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "main": "./dist/index.js",
   "license": "MIT",
   "scripts": {
@@ -20,13 +20,11 @@
   "dependencies": {
     "colorette": "^2.0.20",
     "minimist": "^1.2.8",
-    "prompts": "^2.4.2",
-    "semver": "^7.5.4"
+    "prompts": "^2.4.2"
   },
   "devDependencies": {
     "@types/minimist": "^1.2.2",
     "@types/prompts": "^2.4.4",
-    "@types/semver": "^7.5.6",
     "typescript": "^5.0.0"
   },
   "engines": {
