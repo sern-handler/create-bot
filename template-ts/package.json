@@ -18,7 +18,8 @@
 	"dependencies": {
 		"@sern/handler": "^3.0.3",
 		"discord.js": "latest",
-                "dotenv": "^16.3.1"
+                "dotenv": "^16.3.1",
+                "@sern/publisher": "^1.0.0"
 	},
 	"devDependencies": {
 		"@types/node": "^17.0.25",
