@@ -1,4 +1,5 @@
 import 'dotenv/config'
+import * as config from './config.js'
 import { Client, GatewayIntentBits } from 'discord.js';
 import { Sern, makeDependencies } from '@sern/handler';
 import { Publisher } from '@sern/publisher'
@@ -24,10 +25,6 @@ await makeDependencies(({ add }) => {
 });
 
 //View docs for all options
-Sern.init({
-    defaultPrefix: '!', // removing defaultPrefix will shut down text commands
-    commands: 'dist/commands',
- // events: 'dist/events', //(optional)
-});
+Sern.init(config);
 
 await client.login()

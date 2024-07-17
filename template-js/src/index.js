@@ -1,5 +1,6 @@
 /// <reference path="dependencies.d.ts" />
 import 'dotenv/config'
+import * as config from './config.js'
 import { Client, GatewayIntentBits } from 'discord.js';
 import { Sern, makeDependencies } from '@sern/handler';
 import {  Publisher } from '@sern/publisher'
@@ -21,14 +22,11 @@ const client = new Client({
  */
 await makeDependencies(({ add }) => {
     add('@sern/client', client);
+    
     add('publisher', new Publisher());
 });
 
 //View docs for all options
-Sern.init({
-    defaultPrefix: '!', // removing defaultPrefix will shut down text commands
-    commands: 'src/commands',
-    // events: 'src/events', //(optional)
-});
+Sern.init(config);
 
 client.login();

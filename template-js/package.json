@@ -3,10 +3,11 @@
 	"version": "1.0.0",
 	"private": true,
 	"description": "",
-	"main": "src/index.js",
+	"main": "dist/index.js",
 	"scripts": {
 	    "start": "node .",
-            "commands:publish": "sern commands publish"
+            "commands:publish": "sern commands publish",
+            "build": "sern build"
 	},
 	"keywords": [
             "javascript",
