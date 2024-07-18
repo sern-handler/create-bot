@@ -3,7 +3,7 @@ import 'dotenv/config'
 import * as config from './config.js'
 import { Client, GatewayIntentBits } from 'discord.js';
 import { Sern, makeDependencies } from '@sern/handler';
-import {  Publisher } from '@sern/publisher'
+import { Publisher } from '@sern/publisher'
 
 const client = new Client({
 	intents: [
