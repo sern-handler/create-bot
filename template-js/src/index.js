@@ -22,8 +22,11 @@ const client = new Client({
  */
 await makeDependencies(({ add }) => {
     add('@sern/client', client);
-    
-    add('publisher', new Publisher());
+    add('publisher', deps => new Publisher(
+        deps['@sern/modules'],
+        deps['@sern/emitter'],
+        deps['@sern/logger']
+    ));
 });
 
 //View docs for all options
