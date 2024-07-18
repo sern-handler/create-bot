@@ -3,10 +3,11 @@
 	"version": "1.0.0",
 	"private": true,
 	"description": "",
-	"main": "src/index.js",
+	"main": "dist/index.js",
 	"scripts": {
 	    "start": "node .",
-            "commands:publish": "sern commands publish"
+            "commands:publish": "sern commands publish",
+            "build": "sern build"
 	},
 	"keywords": [
             "javascript",
@@ -16,7 +17,8 @@
 	"dependencies": {
 	    "@sern/handler": "^3.0.3",
 	    "discord.js": "latest",
-            "dotenv": "^16.3.1"
+            "dotenv": "^16.3.1",
+            "@sern/publisher": "^1.0.0"
 	},
 	"devDependencies": {
 	    "@types/node": "^18.0.25"
