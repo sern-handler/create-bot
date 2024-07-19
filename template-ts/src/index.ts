@@ -24,7 +24,7 @@ await makeDependencies(({ add }) => {
     add('publisher', deps => new Publisher(
         deps['@sern/modules'],
         deps['@sern/emitter'],
-        deps['@sern/logger']
+        deps['@sern/logger']!
     ));
 });
 
