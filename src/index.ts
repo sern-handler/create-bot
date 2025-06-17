@@ -136,7 +136,7 @@ async function runInteractive() {
         //@ts-ignore
         const selection = await prompt([which_install_cli]) 
         await new Promise((resolve, reject) => {
-            const child = spawn(selection.manager, ['install', '-g', '@sern/cli@latest'], {  cwd, shell: true });
+            const child = spawn(selection.manager, ['install', '-g', '@sern/cli@latest'], { cwd });
             child.on('data', (s) => console.log(s.toString()));
             child.on('error', (e) => {
                 console.error(e);
@@ -176,7 +176,7 @@ async function runShort(
         const selection = await prompt([which_install_cli]) 
         console.log(`Installing ${magentaBright('@sern/cli')}:`)
         await new Promise((resolve, reject) => {
-            const child = spawn(selection.manager, ['install', '-g', '@sern/cli@latest'], {  cwd, shell: true });
+            const child = spawn(selection.manager, ['install', '-g', '@sern/cli@latest'], { cwd });
             child.stdout.pipe(process.stdout)
             child.on('data', (s) => console.log(s.toString()));
             child.on('error', (e) => {
@@ -235,7 +235,7 @@ async function runInstall(
 	if (!runInstall) return;
         await new Promise((resolve, reject) => {
             console.log('Installing dependencies with ', magentaBright(pkgManager!));
-            const child = spawn(pkgManager!, ['install'], { stdio: 'pipe', cwd, shell: true });
+            const child = spawn(pkgManager!, ['install'], { stdio: 'pipe', cwd });
             child.stdout.pipe(process.stdout)
             child.on('data', (s) => console.log(s.toString()));
             child.on('error', (e) => {
